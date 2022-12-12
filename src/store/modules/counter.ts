@@ -1,10 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+
+type ICounter = {
+  counter: number
+}
+
+const initialState: ICounter = { counter: 89 }
 
 const counterSplice = createSlice({
   name: 'counter',
-  initialState: { counter: 89 },
+  initialState,
   reducers: {
-    calcCount(state, action) {
+    calcCount(state, action: PayloadAction<number>) {
       state.counter += action.payload
     }
   }
