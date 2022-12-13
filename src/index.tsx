@@ -6,14 +6,18 @@ import 'normalize.css'
 import './assets/css/index.less'
 import App from '@/App'
 import { store } from '@/store/index'
+import { ThemeProvider } from 'styled-components'
+import { Theme } from '@/assets/theme/index'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   // <React.StrictMode>
   <Provider store={store}>
-    <HashRouter>
-      <App />
-    </HashRouter>
+    <ThemeProvider theme={Theme}>
+      <HashRouter>
+        <App />
+      </HashRouter>
+    </ThemeProvider>
   </Provider>
   // </React.StrictMode>
 )
