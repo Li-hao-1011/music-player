@@ -1,18 +1,18 @@
 import React, { memo, useEffect } from 'react'
 import type { FC, ReactNode } from 'react'
 import { useAppDispatch } from '@/store'
-import { fetchBannerDataAction, fetchHotRecommendDataAction } from '../store/recommend'
+import { fetchRecommendDataAction } from '../store/recommend'
 import TopBanner from '../componentss/TopBanner'
 import { Content, RecommendLeft, RecommendRight } from './Recommend.style'
 import { HotRecommend } from '../componentss/HotRecommend'
+import { NewAlbum } from '../componentss/NewAlbum'
 interface IProps {
   children?: ReactNode
 }
 const FComponent: FC<IProps> = () => {
   const dispatch = useAppDispatch()
   useEffect(() => {
-    dispatch(fetchBannerDataAction())
-    dispatch(fetchHotRecommendDataAction())
+    dispatch(fetchRecommendDataAction())
   }, [])
   return (
     <div>
@@ -20,6 +20,7 @@ const FComponent: FC<IProps> = () => {
       <Content className="wrap-v2">
         <RecommendLeft>
           <HotRecommend />
+          <NewAlbum />
         </RecommendLeft>
         <RecommendRight>RecommendRight</RecommendRight>
       </Content>

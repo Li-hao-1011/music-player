@@ -2,16 +2,19 @@ import React, { memo } from 'react'
 import type { FC, ReactNode } from 'react'
 import { HotRecommendWrapper } from './HotRecommend.style'
 import { AreaHeaderRmd } from '@/components/area-header-rmd/AreaHeaderRmd'
-import { useAppSelector } from '@/store'
+import { appShallowEqual, useAppSelector } from '@/store'
 import { SongItem } from '@/components/song-item/SongItem'
 
 interface IProps {
   children?: ReactNode
 }
 const FComponent: FC<IProps> = () => {
-  const { recommendSongs } = useAppSelector((state) => ({
-    recommendSongs: state.recommend.recommendSongs
-  }))
+  const { recommendSongs } = useAppSelector(
+    (state) => ({
+      recommendSongs: state.recommend.recommendSongs
+    }),
+    appShallowEqual
+  )
   return (
     <HotRecommendWrapper>
       <AreaHeaderRmd
