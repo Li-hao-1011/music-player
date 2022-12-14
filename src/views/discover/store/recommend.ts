@@ -1,18 +1,26 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { getBanners } from '../service/recommend'
+import { getBanners, getHotRecommend } from '../service/recommend'
 type IInitialState = {
   banners: any[]
+  recommendSongs: any[]
 }
 const initialState: IInitialState = {
-  banners: []
+  banners: [],
+  recommendSongs: []
 }
 
-export const fetchBannerDataAction = createAsyncThunk('banners', async (arg, { dispatch }) => {
+export const fetchBannerDataAction = createAsyncThunk('banners', async (_arg, { dispatch }) => {
   const res = await getBanners()
-  console.log('res', res.data)
   dispatch(setBannersAction(res.data.banners))
-  // return res.data
 })
+
+export const fetchHotRecommendDataAction = createAsyncThunk(
+  'hotRecommend',
+  async (_arg, { dispatch }) => {
+    const res = await getHotRecommend()
+    dispatch(setRecommendSongAction(res.data?.result ?? []))
+  }
+)
 
 const recommendSlice = createSlice({
   name: 'recommend',
@@ -20,9 +28,13 @@ const recommendSlice = createSlice({
   reducers: {
     setBannersAction(state, { payload }) {
       state.banners = payload
+    },
+    setRecommendSongAction(state, { payload }) {
+      state.recommendSongs = payload
     }
   }
-  /*   extraReducers: (builder) => {
+  /*
+  extraReducers: (builder) => {
     builder
       .addCase(fetchBannerDataAction.pending, (state, { payload }) => {
         console.log('pending')
@@ -38,5 +50,5 @@ const recommendSlice = createSlice({
   } */
 })
 
-export const { setBannersAction } = recommendSlice.actions
+export const { setBannersAction, setRecommendSongAction } = recommendSlice.actions
 export const recommendReducer = recommendSlice.reducer

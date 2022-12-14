@@ -2,7 +2,7 @@ import React, { memo, useRef, ElementRef, useState } from 'react'
 import type { FC, ReactNode } from 'react'
 import classnames from 'classnames'
 import { useAppSelector, appShallowEqual } from '@/store'
-import { BannerWrapper, BannerControl, BannerLeft, BannerRight } from './style'
+import { BannerWrapper, BannerControl, BannerLeft, BannerRight } from './TopBanner.style'
 import { Carousel } from 'antd'
 
 interface IProps {
