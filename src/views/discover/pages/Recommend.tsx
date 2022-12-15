@@ -1,13 +1,19 @@
 import React, { memo, useEffect } from 'react'
 import type { FC, ReactNode } from 'react'
 import { useAppDispatch } from '@/store'
-import { fetchRankingDataAction, fetchRecommendDataAction } from '../store/recommend'
+import {
+  fetchRankingDataAction,
+  fetchRecommendDataAction,
+  fetchSettleSingerAction
+} from '../store/recommend'
 import TopBanner from '../componentss/TopBanner'
 import { Content, RecommendLeft, RecommendRight } from './Recommend.style'
 import { HotRecommend } from '../componentss/HotRecommend'
 import { NewAlbum } from '../componentss/NewAlbum'
 import { TopRanking } from '../componentss/TopRanking'
 import { UserLogin } from '../componentss/UserLogin'
+import { HotAnchor } from '../componentss/HotAnchor'
+import { SettleSinger } from '../componentss/SettleSinger'
 interface IProps {
   children?: ReactNode
 }
@@ -16,6 +22,7 @@ const FComponent: FC<IProps> = () => {
   useEffect(() => {
     dispatch(fetchRecommendDataAction())
     dispatch(fetchRankingDataAction())
+    dispatch(fetchSettleSingerAction())
   }, [])
   return (
     <div>
@@ -28,8 +35,8 @@ const FComponent: FC<IProps> = () => {
         </RecommendLeft>
         <RecommendRight>
           <UserLogin />
-          <div>入驻歌手</div>
-          <div>登录</div>
+          <SettleSinger />
+          <HotAnchor />
         </RecommendRight>
       </Content>
     </div>

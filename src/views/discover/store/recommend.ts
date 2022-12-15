@@ -5,6 +5,7 @@ import {
   getBanners,
   getHotRecommend,
   getPlaylistDetail,
+  getSettleSinger,
   getToplist
 } from '../service/recommend'
 type IInitialState = {
@@ -12,20 +13,14 @@ type IInitialState = {
   recommendSongs: any[]
   newAlbums: any[]
   rankings: any[]
-
-  upRanking: any[]
-  newRanking: any[]
-  originRanking: any[]
+  settleSingers: any[]
 }
 const initialState: IInitialState = {
   banners: [],
   recommendSongs: [],
   newAlbums: [],
   rankings: [],
-
-  upRanking: [],
-  newRanking: [],
-  originRanking: []
+  settleSingers: []
 }
 
 export const fetchRecommendDataAction = createAsyncThunk('fetchdata', (_arg, { dispatch }) => {
@@ -54,7 +49,6 @@ export const fetchRecommendDataAction = createAsyncThunk('fetchdata', (_arg, { d
     })
 })
 
-const rankingIds = [19723756, 3779629, 2884035]
 export const fetchRankingDataAction = createAsyncThunk(
   'rankingData',
   async (_arg, { dispatch }) => {
@@ -68,6 +62,14 @@ export const fetchRankingDataAction = createAsyncThunk(
     Promise.all(promise).then((res) => {
       dispatch(setRankingsAction(res.map((item) => item.data.playlist)))
     })
+  }
+)
+
+export const fetchSettleSingerAction = createAsyncThunk(
+  'settleSinger',
+  async (_arg, { dispatch }) => {
+    const res = await getSettleSinger()
+    dispatch(setSettleSingerAction(res.data.artists))
   }
 )
 
@@ -105,10 +107,18 @@ const recommendSlice = createSlice({
     },
     setRankingsAction(state, { payload }) {
       state.rankings = payload
+    },
+    setSettleSingerAction(state, { payload }) {
+      state.settleSingers = payload
     }
   }
 })
 
-export const { setBannersAction, setRecommendSongAction, setNewAlbumsAction, setRankingsAction } =
-  recommendSlice.actions
+export const {
+  setBannersAction,
+  setRecommendSongAction,
+  setNewAlbumsAction,
+  setRankingsAction,
+  setSettleSingerAction
+} = recommendSlice.actions
 export const recommendReducer = recommendSlice.reducer

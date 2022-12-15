@@ -24,3 +24,7 @@ export function getPlaylistDetail(id: number) {
 export function getToplist() {
   return http.get<{ list: any[] }>('/toplist')
 }
+
+export function getSettleSinger() {
+  return http.get<{ artists: any[]; code: number }>('/artist/list?limit=5')
+}
