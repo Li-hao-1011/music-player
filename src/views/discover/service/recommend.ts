@@ -11,3 +11,16 @@ export function getHotRecommend() {
 export function getAlbum() {
   return http.get<{ albums: any[]; code: number }>('/album/newest')
 }
+
+export function getPlaylistDetail(id: number) {
+  return http.get<{
+    playlist: {
+      id: number
+      name: string
+    }
+  }>(`/playlist/detail`, { id }, { withCredentials: true })
+}
+
+export function getToplist() {
+  return http.get<{ list: any[] }>('/toplist')
+}

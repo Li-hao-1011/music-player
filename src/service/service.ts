@@ -39,3 +39,9 @@ http.instance.interceptors.response.use(
     return error.response
   }
 )
+
+http.instance.interceptors.request.use((config) => {
+  // config.headers!.xhrFields = { withCredentials: true }
+
+  return config
+})
