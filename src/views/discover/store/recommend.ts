@@ -39,6 +39,7 @@ export const fetchHotRecommendDataAction = createAsyncThunk(
 export const fetchAlbumDataAction = createAsyncThunk('newAlbum', async (_arg, { dispatch }) => {
   const res = await getAlbum()
   dispatch(setNewAlbumsAction(res.data.albums))
+<<<<<<< HEAD
 }) */
 
 const recommendSlice = createSlice({
