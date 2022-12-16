@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const SettleSingerWrapper = styled.div`
   margin-top: 15px;
   .artists {
-    margin: -5px 0 14px 20px;
+    margin: 6px 0 14px 20px;
     .artists-item {
       margin-top: 14px;
 
@@ -12,18 +12,21 @@ export const SettleSingerWrapper = styled.div`
         width: 210px;
         height: 62px;
         border: 1px solid #ccc;
+        box-sizing: border-box;
         &:hover {
           background-color: #f4f4f4;
         }
         .head {
-          width: 62px;
-          height: 62px;
+          width: 60px;
+          height: 60px;
+          box-sizing: border-box;
           > img {
             width: 100%;
           }
         }
         .info {
-          width: 133px;
+          width: 130px;
+          /* flex: 1; */
           height: 60px;
           margin: 8px 0 0 10px;
           .title {

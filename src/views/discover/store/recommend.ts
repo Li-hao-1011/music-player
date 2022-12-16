@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {
   getAlbum,
   getBanners,
+  getHotAnchor,
   getHotRecommend,
   getPlaylistDetail,
   getSettleSinger,
@@ -14,13 +15,15 @@ type IInitialState = {
   newAlbums: any[]
   rankings: any[]
   settleSingers: any[]
+  hotAnchors: any[]
 }
 const initialState: IInitialState = {
   banners: [],
   recommendSongs: [],
   newAlbums: [],
   rankings: [],
-  settleSingers: []
+  settleSingers: [],
+  hotAnchors: []
 }
 
 export const fetchRecommendDataAction = createAsyncThunk('fetchdata', (_arg, { dispatch }) => {
@@ -68,8 +71,10 @@ export const fetchRankingDataAction = createAsyncThunk(
 export const fetchSettleSingerAction = createAsyncThunk(
   'settleSinger',
   async (_arg, { dispatch }) => {
-    const res = await getSettleSinger()
-    dispatch(setSettleSingerAction(res.data.artists))
+    const settleSinger = await getSettleSinger()
+    const hotAnchor = await getHotAnchor()
+    dispatch(setSettleSingerAction(settleSinger.data.artists))
+    dispatch(setHotAnchorAction(hotAnchor.data.data.list))
   }
 )
 
@@ -110,6 +115,9 @@ const recommendSlice = createSlice({
     },
     setSettleSingerAction(state, { payload }) {
       state.settleSingers = payload
+    },
+    setHotAnchorAction(state, { payload }) {
+      state.hotAnchors = payload
     }
   }
 })
@@ -119,6 +127,7 @@ export const {
   setRecommendSongAction,
   setNewAlbumsAction,
   setRankingsAction,
-  setSettleSingerAction
+  setSettleSingerAction,
+  setHotAnchorAction
 } = recommendSlice.actions
 export const recommendReducer = recommendSlice.reducer

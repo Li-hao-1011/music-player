@@ -21,7 +21,7 @@ const FComponent: FC<IProps> = () => {
             <li className="artists-item" key={item.id}>
               <a href="">
                 <div className="head">
-                  <img src={formatImageSize(item.img1v1Url, 62)} alt="" />
+                  <img src={item.img1v1Url} alt="" />
                 </div>
                 <div className="info">
                   <h4 className="title">{item.name}</h4>

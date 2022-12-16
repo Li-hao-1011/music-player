@@ -28,3 +28,7 @@ export function getToplist() {
 export function getSettleSinger() {
   return http.get<{ artists: any[]; code: number }>('/artist/list?limit=5')
 }
+
+export function getHotAnchor() {
+  return http.get<{ data: { list: any[] } }>('/dj/toplist/hours?limit=5')
+}
