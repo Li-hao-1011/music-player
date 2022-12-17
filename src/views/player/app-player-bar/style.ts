@@ -103,11 +103,15 @@ export const PlayInfo = styled.div`
           border: none;
           margin-top: -7px;
           background: url(${require('@/assets/img/sprite_icon.png')}) 0 -250px;
+          &::after,
+          &::before {
+            display: none;
+          }
         }
       }
 
       .time {
-        .now-time {
+        .current {
           color: #e1e1e1;
         }
         .divider {
@@ -129,15 +133,27 @@ export const Operator = styled.div.attrs(() => ({
     width: 25px;
     height: 25px;
   }
+  .left {
+    .pip {
+      background-position: 0 0;
+      &:hover {
+        background-position: 0 -25px;
+      }
+    }
+    .favor {
+      background-position: -88px -163px;
+      &:hover {
+        background-position: -88px -189px;
+      }
+    }
 
-  .favor {
-    background-position: -88px -163px;
+    .share {
+      background-position: -114px -163px;
+      &:hover {
+        background-position: -114px -189px;
+      }
+    }
   }
-
-  .share {
-    background-position: -114px -163px;
-  }
-
   .right {
     display: flex;
     align-items: center;
@@ -147,10 +163,13 @@ export const Operator = styled.div.attrs(() => ({
 
     .volume {
       background-position: -2px -248px;
+      &:hover {
+        background-position: -31px -248px;
+      }
     }
 
     .loop {
-      background-position: '-66px -248px'; /* ${(props) => {
+      background-position: -66px -248px; /* ${(props) => {
         switch (props.sequence) {
           case 1:
             return '-66px -248px'
@@ -168,6 +187,9 @@ export const Operator = styled.div.attrs(() => ({
       color: #ccc;
       width: 59px;
       background-position: -42px -68px;
+      &:hover {
+        background-position: -42px -98px;
+      }
     }
   }
 `
