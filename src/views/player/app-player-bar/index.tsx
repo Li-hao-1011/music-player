@@ -26,15 +26,17 @@ const FComponent: FC<IProps> = () => {
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
+  const [isSliding, setSliding] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
 
   const handleTimeUpdate = () => {
-    const currentTime = audioRef.current?.currentTime ?? 0
-    setCurrentTime(currentTime * 1000)
-    const totalTime = duration
-    const progress = ((currentTime * 1000) / totalTime) * 100
-
-    setProgress(progress)
+    const currentTime = audioRef.current!.currentTime * 1000
+    // 不拖拽是才设置进度条
+    if (!isSliding) {
+      const progress = (currentTime / duration) * 100
+      setCurrentTime(currentTime)
+      setProgress(progress)
+    }
   }
 
   /** 组件内的副作用操作 */
@@ -68,6 +70,22 @@ const FComponent: FC<IProps> = () => {
     //   handleChangeMusic(true)
     // }
   }
+  // 改变进度条
+  const handleOnAfterChange = (value: number) => {
+    const time = (value / 100) * duration
+    audioRef.current!.currentTime = time / 1000
+    setCurrentTime(time)
+    setSliding(false)
+  }
+  // 拖拽进度条
+  const handleOnChange = (value: number) => {
+    // 设置拖拽标志
+    setSliding(true)
+    setProgress(value)
+    // 拖拽过程中设置实时时间
+    const currentTime = (value / 100) * duration
+    setCurrentTime(currentTime)
+  }
   return (
     <AppPlayerBarWrapper className="sprite_playbar">
       <div className="content wrap-v2">
@@ -95,6 +113,8 @@ const FComponent: FC<IProps> = () => {
                 value={progress}
                 tooltip={{ formatter: null }}
                 step={0.2}
+                onAfterChange={(value) => handleOnAfterChange(value)}
+                onChange={(value) => handleOnChange(value)}
               />
               <div className="time">
                 <span className="current">{formatTime(currentTime)}</span>
