@@ -1,40 +1,105 @@
-import React, { memo } from 'react'
+import React, { ElementRef, memo, useEffect, useRef, useState } from 'react'
 import type { FC, ReactNode } from 'react'
 import { AppPlayerBarWrapper, Control, Operator, PlayInfo } from './style'
 import { Link, NavLink } from 'react-router-dom'
 import { Slider } from 'antd'
 import { formatImageSize } from '@/utils/format'
+import { useAppSelector } from '@/store'
+import { getSongUrl } from '../service/player'
 
 interface IProps {
   children?: ReactNode
 }
 const FComponent: FC<IProps> = () => {
+  const { currentSong } = useAppSelector((state) => ({
+    currentSong: state.player.currentSong
+  }))
+  const [playing, setPlaying] = useState(false)
+  const changePlayStatus = () => {
+    console.log('changePlayStatus', playing)
+    playing
+      ? audioRef.current?.pause()
+      : audioRef.current?.play().catch(() => {
+          console.log('p-0')
+          setPlaying(false)
+        })
+    setPlaying(!playing)
+  }
+  const [progress, setProgress] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const audioRef = useRef<HTMLAudioElement>(null)
+
+  const handleTimeUpdate = () => {
+    // console.log('handleTimeUpdate', audioRef.current?.currentTime)
+    const currentTime = audioRef.current?.currentTime ?? 0
+    const totalTime = duration
+    const progress = ((currentTime * 1000) / totalTime) * 100
+
+    setProgress(progress)
+    console.log('progress', progress)
+  }
+  const setSongPlay = async () => {
+    console.log('setSongPlay')
+  }
+  /** 组件内的副作用操作 */
+  useEffect(() => {
+    getSongUrl(currentSong.id).then(
+      (res) => {
+        audioRef.current!.src = res.data.data[0].url
+
+        audioRef.current
+          ?.play()
+          .then(() => {
+            console.log('歌曲播放成功！')
+          })
+          .catch((err) => {
+            setPlaying(false)
+            console.log('歌曲播放失败', err)
+          })
+      },
+      (err) => {
+        console.log('songUrl', err)
+      }
+    )
+    setDuration(currentSong.dt)
+  }, [currentSong])
+
+  const handleTimeEnded = () => {
+    // if (playMode === 2) {
+    //   audioRef.current!.currentTime = 0
+    //   audioRef.current?.play()
+    // } else {
+    //   handleChangeMusic(true)
+    // }
+  }
   return (
     <AppPlayerBarWrapper className="sprite_playbar">
       <div className="content wrap-v2">
-        <Control isPlaying={true}>
+        <Control isPlaying={playing}>
           <button className="cursor-underline prev sprite_playbar"></button>
-          <button className="cursor-underline play sprite_playbar"></button>
+          <button
+            className="cursor-underline play sprite_playbar"
+            onClick={() => changePlayStatus()}
+          ></button>
           <button className="cursor-underline next sprite_playbar"></button>
         </Control>
         <PlayInfo>
           <Link to="/player">
-            <img
-              className="image"
-              src={formatImageSize(
-                'http://p2.music.126.net/thrEGQSfLQp0Kd6M5yBEEg==/109951167878713410.jpg',
-                34
-              )}
-              alt=""
-            />
+            <img className="image" src={formatImageSize(currentSong?.al?.picUrl, 34)} alt="" />
           </Link>
           <div className="info">
             <div className="song">
-              <span className="song-name">日落大道</span>
-              <span className="singer-name">梁博</span>
+              <span className="song-name">{currentSong.name}</span>
+              <span className="singer-name">{currentSong.ar[0].name}</span>
             </div>
             <div className="progress">
-              <Slider className="ant-slider" defaultValue={30} />
+              <Slider
+                className="ant-slider"
+                defaultValue={0}
+                value={progress}
+                tooltip={{ formatter: null }}
+                step={0.2}
+              />
               <div className="time">
                 <span className="current">00:52</span>
                 <span className="divider">/</span>
@@ -55,8 +120,8 @@ const FComponent: FC<IProps> = () => {
             <button className="btn cursor-underline sprite_playbar playlist"></button>
           </div>
         </Operator>
+        <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} onEnded={handleTimeEnded} />
       </div>
-      <audio />
     </AppPlayerBarWrapper>
   )
 }

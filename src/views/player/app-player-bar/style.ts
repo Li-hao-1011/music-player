@@ -23,9 +23,11 @@ export const AppPlayerBarWrapper = styled.div`
   }
 `
 
-export const Control = styled.div.attrs(() => ({
-  isPlaying: false
-}))`
+interface IBarControl {
+  isPlaying: boolean
+}
+
+export const Control = styled.div<IBarControl>`
   display: flex;
   align-items: center;
 
