@@ -3,9 +3,9 @@ import type { FC, ReactNode } from 'react'
 import { AppPlayerBarWrapper, Control, Operator, PlayInfo } from './style'
 import { Link, NavLink } from 'react-router-dom'
 import { Slider } from 'antd'
-import { formatImageSize } from '@/utils/format'
+import { formatImageSize, formatTime } from '@/utils/format'
 import { useAppSelector } from '@/store'
-import { getSongUrl } from '../service/player'
+import { getSongInfo, getSongUrl } from '../service/player'
 
 interface IProps {
   children?: ReactNode
@@ -16,31 +16,27 @@ const FComponent: FC<IProps> = () => {
   }))
   const [playing, setPlaying] = useState(false)
   const changePlayStatus = () => {
-    console.log('changePlayStatus', playing)
     playing
       ? audioRef.current?.pause()
       : audioRef.current?.play().catch(() => {
-          console.log('p-0')
           setPlaying(false)
         })
     setPlaying(!playing)
   }
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
+  const [currentTime, setCurrentTime] = useState(0)
   const audioRef = useRef<HTMLAudioElement>(null)
 
   const handleTimeUpdate = () => {
-    // console.log('handleTimeUpdate', audioRef.current?.currentTime)
     const currentTime = audioRef.current?.currentTime ?? 0
+    setCurrentTime(currentTime * 1000)
     const totalTime = duration
     const progress = ((currentTime * 1000) / totalTime) * 100
 
     setProgress(progress)
-    console.log('progress', progress)
   }
-  const setSongPlay = async () => {
-    console.log('setSongPlay')
-  }
+
   /** 组件内的副作用操作 */
   useEffect(() => {
     getSongUrl(currentSong.id).then(
@@ -101,9 +97,9 @@ const FComponent: FC<IProps> = () => {
                 step={0.2}
               />
               <div className="time">
-                <span className="current">00:52</span>
+                <span className="current">{formatTime(currentTime)}</span>
                 <span className="divider">/</span>
-                <span className="duration">03:42</span>
+                <span className="duration">{formatTime(duration)}</span>
               </div>
             </div>
           </div>
