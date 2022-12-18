@@ -9,7 +9,7 @@ interface IProps {
   children?: ReactNode
 }
 const FComponent: FC<IProps> = () => {
-  const { rankings } = useAppSelector(
+  const { rankings = [] } = useAppSelector(
     (state) => ({
       rankings: state.recommend.rankings
     }),

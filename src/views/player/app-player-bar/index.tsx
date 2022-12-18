@@ -1,35 +1,43 @@
-import React, { ElementRef, memo, useEffect, useRef, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 import type { FC, ReactNode } from 'react'
 import { AppPlayerBarWrapper, Control, Operator, PlayInfo } from './style'
-import { Link, NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Slider } from 'antd'
 import { formatImageSize, formatTime } from '@/utils/format'
-import { useAppSelector } from '@/store'
-import { getSongInfo, getSongUrl } from '../service/player'
+import { useAppDispatch, useAppSelector } from '@/store'
+import { setLyricIndex } from '../store/player'
 
 interface IProps {
   children?: ReactNode
 }
 const FComponent: FC<IProps> = () => {
-  const { currentSong } = useAppSelector((state) => ({
-    currentSong: state.player.currentSong
+  const { currentSong, songUrl, lyrics, lyricIndex } = useAppSelector((state) => ({
+    currentSong: state.player.currentSong,
+    songUrl: state.player.songUrl,
+    lyrics: state.player.lyrics,
+    lyricIndex: state.player.lyricIndex
   }))
   const [playing, setPlaying] = useState(false)
-  const changePlayStatus = () => {
-    playing
-      ? audioRef.current?.pause()
-      : audioRef.current?.play().catch(() => {
-          setPlaying(false)
-        })
-    setPlaying(!playing)
-  }
+
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
-  const [isSliding, setSliding] = useState(false)
+  const [isSliding, setSliding] = useState(true)
   const audioRef = useRef<HTMLAudioElement>(null)
-
+  const dispatch = useAppDispatch()
+  // 暂停/播放
+  const changePlayStatus = () => {
+    if (playing) {
+      audioRef.current?.pause()
+    } else {
+      audioRef.current?.play().catch(() => {
+        setPlaying(false)
+      })
+    }
+    setPlaying(!playing)
+  }
   const handleTimeUpdate = () => {
+    // 当前拖拽的时间
     const currentTime = audioRef.current!.currentTime * 1000
     // 不拖拽是才设置进度条
     if (!isSliding) {
@@ -37,30 +45,35 @@ const FComponent: FC<IProps> = () => {
       setCurrentTime(currentTime)
       setProgress(progress)
     }
+    // 匹配歌词
+    let index = lyrics.length === 0 ? 0 : lyrics.length - 1
+    for (let i = 0; i < lyrics.length; i++) {
+      const lyric = lyrics[i]
+      if (lyric.time > currentTime) {
+        index = i === 0 ? 0 : i - 1
+        break
+      }
+    }
+    if (lyricIndex === index || index === -1) return
+    console.log('当前', lyrics?.[index]?.text ?? '没有歌词')
+    dispatch(setLyricIndex(index))
+    console.log('songUrl', songUrl)
   }
 
   /** 组件内的副作用操作 */
   useEffect(() => {
-    getSongUrl(currentSong.id).then(
-      (res) => {
-        audioRef.current!.src = res.data.data[0].url
-
-        audioRef.current
-          ?.play()
-          .then(() => {
-            console.log('歌曲播放成功！')
-          })
-          .catch((err) => {
-            setPlaying(false)
-            console.log('歌曲播放失败', err)
-          })
-      },
-      (err) => {
-        console.log('songUrl', err)
-      }
-    )
+    audioRef.current!.src = songUrl
+    audioRef.current
+      ?.play()
+      .then(() => {
+        console.log('歌曲播放成功！')
+      })
+      .catch((err) => {
+        setPlaying(false)
+        console.log('歌曲播放失败', err)
+      })
     setDuration(currentSong.dt)
-  }, [currentSong])
+  }, [currentSong, songUrl])
 
   const handleTimeEnded = () => {
     // if (playMode === 2) {
@@ -93,7 +106,7 @@ const FComponent: FC<IProps> = () => {
           <button className="cursor-underline prev sprite_playbar"></button>
           <button
             className="cursor-underline play sprite_playbar"
-            onClick={() => changePlayStatus()}
+            onClick={changePlayStatus}
           ></button>
           <button className="cursor-underline next sprite_playbar"></button>
         </Control>

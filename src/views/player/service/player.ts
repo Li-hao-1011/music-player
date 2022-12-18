@@ -15,5 +15,14 @@ export function getSongUrl(id: number) {
  * @returns
  */
 export function getSongInfo(id: number) {
-  return http.get(`/song/detail?ids=${id}`)
+  return http.get<{ songs: any[]; code: number }>(`/song/detail?ids=${id}`)
+}
+
+/**
+ * 获取歌词
+ * @param id
+ * @returns
+ */
+export function getSongLyric(id: number) {
+  return http.get<{ lrc: { lyric: string } }>(`/lyric?id=${id}`)
 }
