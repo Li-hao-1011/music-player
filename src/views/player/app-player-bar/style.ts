@@ -103,7 +103,7 @@ export const PlayInfo = styled.div`
           width: 22px;
           height: 24px;
           border: none;
-          margin-top: -7px;
+          margin-top: -5px;
           background: url(${require('@/assets/img/sprite_icon.png')}) 0 -250px;
           &::after,
           &::before {

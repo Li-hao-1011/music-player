@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef, useState } from 'react'
 import type { FC, ReactNode } from 'react'
 import { AppPlayerBarWrapper, Control, Operator, PlayInfo } from './style'
 import { Link } from 'react-router-dom'
-import { Slider, message } from 'antd'
+import { Slider } from 'antd'
 import { formatImageSize, formatTime } from '@/utils/format'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { setLyricIndex } from '../store/player'
@@ -57,11 +57,6 @@ const FComponent: FC<IProps> = () => {
       }
     }
     if (lyricIndex === index || index === -1) return
-    /*     message.open({
-      content: '',
-      duration: 0,
-      key: 'lyric'
-    }) */
     setLyric(lyrics?.[index]?.text ?? '')
     dispatch(setLyricIndex(index))
   }
@@ -79,7 +74,7 @@ const FComponent: FC<IProps> = () => {
         console.log('歌曲播放失败', err)
       })
     setDuration(currentSong.dt)
-  }, [currentSong, songUrl])
+  }, [currentSong /* , songUrl */])
 
   const handleTimeEnded = () => {
     // if (playMode === 2) {
