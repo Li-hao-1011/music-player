@@ -12,7 +12,7 @@ function App() {
   const dispatch = useAppDispatch()
   useEffect(() => {
     dispatch(fetchCurrentSongAction(33894312))
-  })
+  }, [])
   return (
     <>
       <Header />

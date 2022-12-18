@@ -1,3 +1,4 @@
+import { IRootStore } from '@/store'
 import { formatLyric, ILyric } from '@/utils/format'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { getSongInfo, getSongLyric, getSongUrl } from '../service/player'
@@ -354,26 +355,44 @@ const initialState: IPlayerState = {
       publishTime: 0
     }
   ],
-  playSongIndex: 0
+  playSongIndex: -1
 }
 
-export const fetchCurrentSongAction = createAsyncThunk('current', (id: number, { dispatch }) => {
-  // 获取歌曲信息
-  getSongInfo(id).then((res) => {
-    // setCurrentSong()
-    const song = res.data.songs[0]
-    dispatch(setCurrentSong(song))
-  })
-  // 获取歌词
-  getSongLyric(id).then((res) => {
-    // 解析歌词 formatLyric
-    dispatch(setCurrentSongLyric(formatLyric(res.data.lrc.lyric)))
-  })
-  // 获取播放地址
-  getSongUrl(id).then((res) => {
-    dispatch(setCurrentUrl(res.data.data[0].url))
-  })
-})
+export const fetchCurrentSongAction = createAsyncThunk<void, number, { state: IRootStore }>(
+  'current',
+  (id, { dispatch, getState }) => {
+    // 列表中是否存在
+    const playSongList = getState().player.playSongList
+    const findIndex = playSongList.findIndex((item) => item.id === id)
+    // 获取歌曲信息
+    if (findIndex === -1) {
+      getSongInfo(id).then((res) => {
+        // setCurrentSong()
+        const song = res.data.songs[0]
+        dispatch(setCurrentSong(song))
+
+        const newPlayList = [...playSongList]
+        newPlayList.push(song)
+        dispatch(setPlaySongList(newPlayList))
+        dispatch(setPlaySongIndex(newPlayList.length - 1))
+      })
+    } else {
+      // 列表中存在
+      dispatch(setCurrentSong(playSongList.at(findIndex)))
+      dispatch(setPlaySongIndex(findIndex))
+    }
+
+    // 获取歌词
+    getSongLyric(id).then((res) => {
+      // 解析歌词 formatLyric
+      dispatch(setCurrentSongLyric(formatLyric(res.data.lrc.lyric)))
+    })
+    // 获取播放地址
+    getSongUrl(id).then((res) => {
+      dispatch(setCurrentUrl(res.data.data[0].url))
+    })
+  }
+)
 
 const playerSlice = createSlice({
   name: 'player',
@@ -387,16 +406,27 @@ const playerSlice = createSlice({
     },
     setCurrentUrl(state, { payload }) {
       state.songUrl = payload
-      console.log('songUrl', payload)
     },
     setLyricIndex(state, { payload }) {
       state.lyricIndex = payload
+    },
+    setPlaySongIndex(state, { payload }) {
+      state.playSongIndex = payload
+    },
+    setPlaySongList(state, { payload }) {
+      state.playSongList = payload
     }
   }
 })
 
-export const { setCurrentSong, setCurrentSongLyric, setCurrentUrl, setLyricIndex } =
-  playerSlice.actions
+export const {
+  setCurrentSong,
+  setCurrentSongLyric,
+  setCurrentUrl,
+  setLyricIndex,
+  setPlaySongIndex,
+  setPlaySongList
+} = playerSlice.actions
 export const playerReducer = playerSlice.reducer
 
 /*

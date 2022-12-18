@@ -35,10 +35,10 @@ const FComponent: FC<IProps> = () => {
       audioRef.current
         ?.play()
         .then(() => {
-          console.log('播放成功')
+          console.warn('播放成功')
         })
         .catch((err) => {
-          console.log(err)
+          console.error(err)
           setPlaying(false)
         })
     }
@@ -76,11 +76,11 @@ const FComponent: FC<IProps> = () => {
       audioRef.current
         ?.play()
         .then(() => {
-          console.log('歌曲播放成功！')
+          console.warn('歌曲播放成功！')
         })
         .catch((err) => {
           setPlaying(false)
-          console.log('歌曲播放失败', err)
+          console.error('歌曲播放失败', err)
         })
       setDuration(currentSong.dt)
     })
