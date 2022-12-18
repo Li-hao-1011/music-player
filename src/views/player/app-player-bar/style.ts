@@ -123,10 +123,8 @@ export const PlayInfo = styled.div`
     }
   }
 `
-
-export const Operator = styled.div.attrs(() => ({
-  sequence: 0
-}))`
+type IOperator = { playMode: 0 | 1 | 2 }
+export const Operator = styled.div<IOperator>`
   display: flex;
   position: relative;
   top: 5px;
@@ -171,16 +169,18 @@ export const Operator = styled.div.attrs(() => ({
     }
 
     .loop {
-      background-position: -66px -248px; /* ${(props) => {
-        switch (props.sequence) {
+      /* background-position: -66px -248px; */
+      background-position: ${(props) => {
+        switch (props.playMode) {
           case 1:
             return '-66px -248px'
           case 2:
             return '-66px -344px'
+          case 0:
           default:
             return '-3px -344px'
         }
-      }}; */
+      }};
     }
 
     .playlist {

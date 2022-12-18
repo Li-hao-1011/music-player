@@ -3,6 +3,12 @@ import { formatLyric, ILyric } from '@/utils/format'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { getSongInfo, getSongLyric, getSongUrl } from '../service/player'
 
+enum PlayMode {
+  // 0 顺序, 1 随机, 2 单曲
+  '00' = 0,
+  '01' = 1,
+  '02' = 2
+}
 type IPlayerState = {
   currentSong: any
   songUrl: string
@@ -10,6 +16,7 @@ type IPlayerState = {
   lyricIndex: number
   playSongList: any[]
   playSongIndex: number
+  playMode: PlayMode
 }
 const initialState: IPlayerState = {
   currentSong: {
@@ -355,7 +362,8 @@ const initialState: IPlayerState = {
       publishTime: 0
     }
   ],
-  playSongIndex: -1
+  playSongIndex: -1,
+  playMode: PlayMode['00']
 }
 
 export const fetchCurrentSongAction = createAsyncThunk<void, number, { state: IRootStore }>(
@@ -415,6 +423,9 @@ const playerSlice = createSlice({
     },
     setPlaySongList(state, { payload }) {
       state.playSongList = payload
+    },
+    changePlayMode(state, { payload }) {
+      state.playMode = payload
     }
   }
 })
@@ -425,7 +436,8 @@ export const {
   setCurrentUrl,
   setLyricIndex,
   setPlaySongIndex,
-  setPlaySongList
+  setPlaySongList,
+  changePlayMode
 } = playerSlice.actions
 export const playerReducer = playerSlice.reducer
 

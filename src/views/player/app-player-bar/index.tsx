@@ -5,18 +5,19 @@ import { Link } from 'react-router-dom'
 import { Slider } from 'antd'
 import { formatImageSize, formatTime } from '@/utils/format'
 import { useAppDispatch, useAppSelector } from '@/store'
-import { setLyricIndex } from '../store/player'
+import { changePlayMode, setLyricIndex } from '../store/player'
 import { Applyric } from '@/views/player/app-lyric'
 
 interface IProps {
   children?: ReactNode
 }
 const FComponent: FC<IProps> = () => {
-  const { currentSong, songUrl, lyrics, lyricIndex } = useAppSelector((state) => ({
+  const { currentSong, songUrl, lyrics, lyricIndex, playMode } = useAppSelector((state) => ({
     currentSong: state.player.currentSong,
     songUrl: state.player.songUrl,
     lyrics: state.player.lyrics,
-    lyricIndex: state.player.lyricIndex
+    lyricIndex: state.player.lyricIndex,
+    playMode: state.player.playMode
   }))
   const [playing, setPlaying] = useState(false)
   const [lyric, setLyric] = useState('')
@@ -110,6 +111,12 @@ const FComponent: FC<IProps> = () => {
     const currentTime = (value / 100) * duration
     setCurrentTime(currentTime)
   }
+  // 播放模式
+  const handleChangePlayMode = () => {
+    let newPlayMode = playMode + 1
+    newPlayMode = newPlayMode > 2 ? 0 : newPlayMode
+    dispatch(changePlayMode(newPlayMode))
+  }
   const setLyrics = (context: string) => context
   return (
     <AppPlayerBarWrapper className="sprite_playbar">
@@ -149,7 +156,7 @@ const FComponent: FC<IProps> = () => {
             </div>
           </div>
         </PlayInfo>
-        <Operator>
+        <Operator playMode={playMode}>
           <div className="left">
             <button className="btn cursor-underline pip_icon pip"></button>
             <button className="btn cursor-underline sprite_playbar favor"></button>
@@ -157,7 +164,10 @@ const FComponent: FC<IProps> = () => {
           </div>
           <div className="right sprite_playbar">
             <button className="btn cursor-underline sprite_playbar volume"></button>
-            <button className="btn cursor-underline sprite_playbar loop"></button>
+            <button
+              className="btn cursor-underline sprite_playbar loop"
+              onClick={handleChangePlayMode}
+            ></button>
             <button className="btn cursor-underline sprite_playbar playlist"></button>
           </div>
         </Operator>
