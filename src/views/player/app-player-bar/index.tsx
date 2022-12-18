@@ -6,7 +6,7 @@ import { Slider } from 'antd'
 import { formatImageSize, formatTime } from '@/utils/format'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { setLyricIndex } from '../store/player'
-import { Applyric } from '@/components/app-lyric'
+import { Applyric } from '@/views/player/app-lyric'
 
 interface IProps {
   children?: ReactNode
@@ -28,13 +28,19 @@ const FComponent: FC<IProps> = () => {
   const audioRef = useRef<HTMLAudioElement>(null)
   const dispatch = useAppDispatch()
   // 暂停/播放
-  const changePlayStatus = () => {
+  const changePlayStatus = function () {
     if (playing) {
       audioRef.current?.pause()
     } else {
-      audioRef.current?.play().catch(() => {
-        setPlaying(false)
-      })
+      audioRef.current
+        ?.play()
+        .then(() => {
+          console.log('播放成功')
+        })
+        .catch((err) => {
+          console.log(err)
+          setPlaying(false)
+        })
     }
     setPlaying(!playing)
   }
@@ -63,18 +69,22 @@ const FComponent: FC<IProps> = () => {
 
   /** 组件内的副作用操作 */
   useEffect(() => {
-    audioRef.current!.src = songUrl
-    audioRef.current
-      ?.play()
-      .then(() => {
-        console.log('歌曲播放成功！')
-      })
-      .catch((err) => {
-        setPlaying(false)
-        console.log('歌曲播放失败', err)
-      })
-    setDuration(currentSong.dt)
-  }, [currentSong /* , songUrl */])
+    new Promise((resolve, _reject) => {
+      resolve(1)
+    }).then(() => {
+      audioRef.current!.src = songUrl
+      audioRef.current
+        ?.play()
+        .then(() => {
+          console.log('歌曲播放成功！')
+        })
+        .catch((err) => {
+          setPlaying(false)
+          console.log('歌曲播放失败', err)
+        })
+      setDuration(currentSong.dt)
+    })
+  }, [currentSong, songUrl])
 
   const handleTimeEnded = () => {
     // if (playMode === 2) {
