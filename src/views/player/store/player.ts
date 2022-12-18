@@ -121,7 +121,6 @@ const playerSlice = createSlice({
     },
     setCurrentSongLyric(state, { payload }) {
       state.lyrics = payload
-      console.log(state.lyrics)
     },
     setCurrentUrl(state, { payload }) {
       state.songUrl = payload

@@ -20,6 +20,7 @@ function App() {
         <div className="App">{useRoutes(routes)}</div>
       </Suspense>
       <Footer />
+
       {/* 播放器 */}
       <AppPlayerBar />
     </>

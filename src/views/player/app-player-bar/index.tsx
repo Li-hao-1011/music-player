@@ -2,10 +2,11 @@ import React, { memo, useEffect, useRef, useState } from 'react'
 import type { FC, ReactNode } from 'react'
 import { AppPlayerBarWrapper, Control, Operator, PlayInfo } from './style'
 import { Link } from 'react-router-dom'
-import { Slider } from 'antd'
+import { Slider, message } from 'antd'
 import { formatImageSize, formatTime } from '@/utils/format'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { setLyricIndex } from '../store/player'
+import { Applyric } from '@/components/app-lyric'
 
 interface IProps {
   children?: ReactNode
@@ -18,6 +19,7 @@ const FComponent: FC<IProps> = () => {
     lyricIndex: state.player.lyricIndex
   }))
   const [playing, setPlaying] = useState(false)
+  const [lyric, setLyric] = useState('')
 
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -55,9 +57,13 @@ const FComponent: FC<IProps> = () => {
       }
     }
     if (lyricIndex === index || index === -1) return
-    console.log('当前', lyrics?.[index]?.text ?? '没有歌词')
+    /*     message.open({
+      content: '',
+      duration: 0,
+      key: 'lyric'
+    }) */
+    setLyric(lyrics?.[index]?.text ?? '')
     dispatch(setLyricIndex(index))
-    console.log('songUrl', songUrl)
   }
 
   /** 组件内的副作用操作 */
@@ -99,6 +105,7 @@ const FComponent: FC<IProps> = () => {
     const currentTime = (value / 100) * duration
     setCurrentTime(currentTime)
   }
+  const setLyrics = (context: string) => context
   return (
     <AppPlayerBarWrapper className="sprite_playbar">
       <div className="content wrap-v2">
@@ -151,6 +158,9 @@ const FComponent: FC<IProps> = () => {
         </Operator>
         <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} onEnded={handleTimeEnded} />
       </div>
+
+      {/* 歌词 */}
+      <Applyric isShow={true} text={setLyrics(lyric)} />
     </AppPlayerBarWrapper>
   )
 }
