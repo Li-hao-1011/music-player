@@ -18,6 +18,8 @@ type IPlayerState = {
   playSongIndex: number
   playMode: PlayMode
 }
+type IThunkState = { state: IRootStore }
+export type ISwitchMode = 'prev' | 'next'
 const initialState: IPlayerState = {
   currentSong: {
     name: '情非得已 (童声版)',
@@ -366,12 +368,13 @@ const initialState: IPlayerState = {
   playMode: PlayMode['00']
 }
 
-export const fetchCurrentSongAction = createAsyncThunk<void, number, { state: IRootStore }>(
+export const fetchCurrentSongAction = createAsyncThunk<void, number, IThunkState>(
   'current',
   (id, { dispatch, getState }) => {
     // 列表中是否存在
     const playSongList = getState().player.playSongList
     const findIndex = playSongList.findIndex((item) => item.id === id)
+    let curentId = id
     // 获取歌曲信息
     if (findIndex === -1) {
       getSongInfo(id).then((res) => {
@@ -388,17 +391,49 @@ export const fetchCurrentSongAction = createAsyncThunk<void, number, { state: IR
       // 列表中存在
       dispatch(setCurrentSong(playSongList.at(findIndex)))
       dispatch(setPlaySongIndex(findIndex))
+      curentId = playSongList.at(findIndex).id
     }
 
     // 获取歌词
-    getSongLyric(id).then((res) => {
+    getSongLyric(curentId).then((res) => {
       // 解析歌词 formatLyric
       dispatch(setCurrentSongLyric(formatLyric(res.data.lrc.lyric)))
     })
     // 获取播放地址
-    getSongUrl(id).then((res) => {
+    getSongUrl(curentId).then((res) => {
       dispatch(setCurrentUrl(res.data.data[0].url))
     })
+  }
+)
+
+export const changeMusicAction = createAsyncThunk<void, ISwitchMode, IThunkState>(
+  'changeMusic',
+  (type, { dispatch, getState }) => {
+    const isNext = type === 'next' ? true : false
+    const playerState = getState().player
+    const playMode = playerState.playMode
+    const playSongList = playerState.playSongList
+    const songLength = playSongList.length
+    let newIndex = playerState.playSongIndex
+
+    switch (playMode) {
+      case 1:
+        newIndex = Math.floor(Math.random() * songLength)
+        break
+      default:
+        newIndex = isNext ? newIndex + 1 : newIndex - 1
+        if (newIndex > songLength - 1) {
+          newIndex = 0
+        }
+        if (newIndex < 0) {
+          newIndex = songLength - 1
+        }
+        break
+    }
+    const song = playSongList.at(newIndex)
+    dispatch(setCurrentSong(song))
+    dispatch(setPlaySongIndex(newIndex))
+    dispatch(fetchCurrentSongAction(song.id))
   }
 )
 

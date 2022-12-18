@@ -5,7 +5,13 @@ import { Link } from 'react-router-dom'
 import { Slider } from 'antd'
 import { formatImageSize, formatTime } from '@/utils/format'
 import { useAppDispatch, useAppSelector } from '@/store'
-import { changePlayMode, setLyricIndex } from '../store/player'
+import {
+  changeMusicAction,
+  changePlayMode,
+  fetchCurrentSongAction,
+  ISwitchMode,
+  setLyricIndex
+} from '../store/player'
 import { Applyric } from '@/views/player/app-lyric'
 
 interface IProps {
@@ -44,6 +50,10 @@ const FComponent: FC<IProps> = () => {
         })
     }
     setPlaying(!playing)
+  }
+  // 切换歌曲
+  const handleonChangeSong = (type: ISwitchMode) => {
+    dispatch(changeMusicAction(type))
   }
   const handleTimeUpdate = () => {
     // 当前拖拽的时间
@@ -122,12 +132,18 @@ const FComponent: FC<IProps> = () => {
     <AppPlayerBarWrapper className="sprite_playbar">
       <div className="content wrap-v2">
         <Control isPlaying={playing}>
-          <button className="cursor-underline prev sprite_playbar"></button>
+          <button
+            className="cursor-underline prev sprite_playbar"
+            onClick={() => handleonChangeSong('prev')}
+          ></button>
           <button
             className="cursor-underline play sprite_playbar"
             onClick={changePlayStatus}
           ></button>
-          <button className="cursor-underline next sprite_playbar"></button>
+          <button
+            className="cursor-underline next sprite_playbar"
+            onClick={() => handleonChangeSong('next')}
+          ></button>
         </Control>
         <PlayInfo>
           <Link to="/player">

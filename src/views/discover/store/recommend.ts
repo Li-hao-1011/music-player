@@ -63,7 +63,11 @@ export const fetchRankingDataAction = createAsyncThunk(
       promise.push(getPlaylistDetail(top.id))
     }
     Promise.all(promise).then((res) => {
-      dispatch(setRankingsAction(res.map((item) => item.data.playlist)))
+      dispatch(
+        setRankingsAction(
+          res.filter((item) => item.data.playlist).map((item) => item.data.playlist)
+        )
+      )
     })
   }
 )

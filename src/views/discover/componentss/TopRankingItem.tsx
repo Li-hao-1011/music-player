@@ -3,6 +3,8 @@ import type { FC, ReactNode } from 'react'
 import { TopRankingItemWrapper } from './TopRankingItem.style'
 import Item from 'antd/es/list/Item'
 import { formatImageSize } from '@/utils/format'
+import { useAppDispatch } from '@/store'
+import { fetchCurrentSongAction } from '@/views/player/store/player'
 
 export interface Root {
   id: number
@@ -256,6 +258,10 @@ interface IProps {
 const FComponent: FC<IProps> = (props) => {
   const { item } = props
   const { tracks = [] } = item
+  const dispatch = useAppDispatch()
+  const handlePlaySong = (id: number) => {
+    dispatch(fetchCurrentSongAction(id))
+  }
   return (
     <TopRankingItemWrapper>
       <div className="header">
@@ -278,7 +284,10 @@ const FComponent: FC<IProps> = (props) => {
             <div className="info">
               <span className="name text-nowrap cursor-underline">{item.name}</span>
               <div className="operate">
-                <button className="btn sprite_02 play"></button>
+                <button
+                  className="btn sprite_02 play"
+                  onClick={() => handlePlaySong(item.id)}
+                ></button>
                 <button className="btn sprite_icon2 addto"></button>
                 <button className="btn sprite_02 favor"></button>
               </div>
