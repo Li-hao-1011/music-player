@@ -96,14 +96,14 @@ const FComponent: FC<IProps> = () => {
       setDuration(currentSong.dt)
     })
   }, [currentSong, songUrl])
-
+  // 当前播放完毕
   const handleTimeEnded = () => {
-    // if (playMode === 2) {
-    //   audioRef.current!.currentTime = 0
-    //   audioRef.current?.play()
-    // } else {
-    //   handleChangeMusic(true)
-    // }
+    if (playMode === 2) {
+      audioRef.current!.currentTime = 0
+      audioRef.current?.play()
+    } else {
+      handleonChangeSong('next')
+    }
   }
   // 改变进度条
   const handleOnAfterChange = (value: number) => {
